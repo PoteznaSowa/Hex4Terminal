@@ -61,7 +61,6 @@ namespace Hex4Terminal {
 		}
 		public static void UpdateStatusBar(string text) {
 			
-
 		}
 	}
 }
