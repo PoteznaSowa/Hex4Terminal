@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hex4Terminal", "Hex4Terminal.csproj", "{8958FA1F-D29F-4BF9-BE32-EDF41BFDEF4A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8958FA1F-D29F-4BF9-BE32-EDF41BFDEF4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8958FA1F-D29F-4BF9-BE32-EDF41BFDEF4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8958FA1F-D29F-4BF9-BE32-EDF41BFDEF4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8958FA1F-D29F-4BF9-BE32-EDF41BFDEF4A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8D826272-F866-49A9-89EE-C58FB732C0DC}
+	EndGlobalSection
+EndGlobal
