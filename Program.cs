@@ -1,36 +1,68 @@
 ﻿using System;
 using System.Text;
-using System.IO;
+using System.Threading;
 
 namespace Hex4Terminal {
-	class Program {
-		public static byte[] FileData;   // Безпосередньо сам файл.
-		public static string FilePath;   // Шлях до файлу.
-		public static bool FileChanged;  // Флаг зміни файлу.
-		public static byte[] ClipBoard;  // Буфер обміну.
-		public static bool InsertMode;   // Режим вставки.
-
-		static int Main(string[] args) {
+	static class Program {
+		static void Main(string[] args) {
 			Console.OutputEncoding = Encoding.UTF8;
 			Console.InputEncoding = Encoding.Unicode;
 			Console.Title = "Hex4Terminal";
 
+			Console.CursorVisible = false;
+			Console.BackgroundColor = ConsoleColor.Black;
 			Console.Clear();
-			for (int i = 0; i < 23; i++)
-				Console.WriteLine("eeeeeeeee eeeeeeeee eeeeeeeee eeeeeeeee eeeeeeeee eeeeeeeee eeeeeeeee eeeeeeeee ");
-			Console.MoveBufferArea(10, 10, 10, 10, 9, 9);
-			Console.ReadKey();
-			return 0;
-			try {
-				FileData = File.ReadAllBytes(args[0]);
-				FilePath = Path.GetFullPath(args[0]);
-			} catch {
-				FileData = new byte[0];
-				FilePath = "Untitled";
-			}
-			Screen.Initialize();
+			Thread clock = new(ClockLoop);
+			clock.Start();
+			while(MainLoop()) { }
 
-			return 0;
+			clock.Join();
 		}
+
+		static bool MainLoop() {
+
+
+
+			if(Console.KeyAvailable) {
+				KeyPress(new InputEventArgs(Console.ReadKey(true)));
+			} else {
+				Thread.Sleep(1);
+			}
+			return Working;
+		}
+		/*
+		static void InputLoop() {
+			do {
+				if(Console.KeyAvailable) {
+					keyqueue.Enqueue(Console.ReadKey(true));
+				} else {
+					Thread.Sleep(1);
+				}
+			} while(Working);
+		}
+		*/
+		static void ClockLoop() {
+			// Викликати подію кожні півсекунди.
+			do {
+				int ms = DateTime.Now.Millisecond;
+				if(ms < 500) {
+					Thread.Sleep(500 - ms);
+				} else {
+					Thread.Sleep(1000 - ms);
+				}
+				ClockTick();
+			} while(Working);
+		}
+
+		public static volatile bool Working = true;
+
+		public delegate void InputEventHandler(InputEventArgs e);
+		public static event InputEventHandler KeyPress = Dummy;
+
+		public static event Action WindowSizeChanged = Dummy;
+		public static event Action ClockTick = Dummy;
+
+		static void Dummy() { }
+		static void Dummy(object o) { }
 	}
 }
