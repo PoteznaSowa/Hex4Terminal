@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Hex4Terminal": {
+      "commandName": "Project",
+      "commandLineArgs": "TADA.WAV"
+    }
+  }
+}

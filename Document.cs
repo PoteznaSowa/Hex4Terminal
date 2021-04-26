@@ -7,23 +7,26 @@ using System.IO;
 
 namespace Hex4Terminal {
 	class Document {
-		FileStream file;
+		public FileStream Stream {
+			get; private set;
+		}
+
 		public string Name {
 			get; private set;
 		}
 
 		public Document() {
 			// Створити новий файл.
-			file = null;
+			Stream = null;
 		}
 		public Document(string path) {
 			// Відкрити файл на комп'ютері.
-			file = File.OpenRead(path);
+			Stream = File.OpenRead(path);
 		}
 
 		~Document() {
-			if(file != null) {
-
+			if(Stream != null) {
+				Stream.Dispose();
 			}
 		}
 	}
