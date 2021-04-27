@@ -17,8 +17,8 @@ namespace Hex4Terminal {
 			wHeight = Console.WindowHeight;
 			if(OperatingSystem.IsWindows()) {
 				wWidth = 120;
-				Console.BufferWidth = 120;
 				Console.WindowWidth = 120;
+				Console.BufferWidth = 120;
 				if(Console.BufferHeight < 50) {
 					Console.BufferHeight = 999;
 				}
@@ -69,11 +69,7 @@ namespace Hex4Terminal {
 			// Перевірити, якщо змінився розмір вікна.
 			if(Console.WindowWidth != wWidth || Console.WindowHeight != wHeight) {
 				lock(UI.ConsoleUse) {
-					Console.Clear();
 					wWidth = Console.WindowWidth;
-					if(inwindows) {
-						Console.BufferWidth = Console.WindowWidth;
-					}
 					wHeight = Console.WindowHeight;
 				}
 				WindowSizeChanged();
@@ -83,14 +79,22 @@ namespace Hex4Terminal {
 			if(inwindows) {
 				if(WaitForSingleObject(OutHandle, 8) == 0 && Console.KeyAvailable) {
 					KeyPress(new InputEventArgs(Console.ReadKey(true)));
+					ClearInputBuffer();
 				}
 			} else if(Console.KeyAvailable) {
 				KeyPress(new InputEventArgs(Console.ReadKey(true)));
+				ClearInputBuffer();
 			} else {
 				Thread.Sleep(8);
 			}
 
 			return Working;
+		}
+
+		static void ClearInputBuffer() {
+			while(Console.KeyAvailable) {
+				Console.ReadKey(true);
+			}
 		}
 		/*
 		static void InputLoop() {

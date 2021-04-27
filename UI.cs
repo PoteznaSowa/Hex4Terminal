@@ -34,31 +34,29 @@ namespace Hex4Terminal {
 			}
 
 			FileStream file = doc.Stream;
+			file.Position = position;
+			byte[] data = new byte[16];
+			StringBuilder builder = new(73);
 			lock(ConsoleUse) {
-				file.Position = position;
 				Console.BackgroundColor = ConsoleColor.Black;
 				Console.ForegroundColor = ConsoleColor.White;
-				byte[] data = new byte[16];
 				for(int i = 0; i < Console.WindowHeight - 3; i++) {
 					Console.SetCursorPosition(0, 2 + i);
 					int bytesread = file.Read(data);
 					if(bytesread == 0) {
 						break;
 					}
-					Console.Write($"{position + (i << 4):X8}");
+					builder.Append($"{position + (i << 4):X8}");
 					for(int j = 0; j < bytesread; j++) {
-						Console.Write($" {data[j]:X2}");
+						builder.Append($" {data[j]:X2}");
 					}
-					Console.Write(new string(' ', (16 - bytesread) * 3));
-					Console.Write(' ');
+					builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
 					for(int j = 0; j < bytesread; j++) {
 						char c = (char)data[j];
-						if(char.IsControl(c)) {
-							Console.Write('.');
-						} else {
-							Console.Write((char)data[j]);
-						}
+						builder.Append(char.IsControl(c) ? '.' : c);
 					}
+					Console.Write(builder);
+					builder.Clear();
 				}
 			}
 		}
@@ -67,32 +65,33 @@ namespace Hex4Terminal {
 				return;
 			}
 
-			FileStream file = doc.Stream;
 			int i = Console.WindowHeight - 4;
+			FileStream file = doc.Stream;
 			file.Position = position + (i << 4);
 			byte[] data = new byte[16];
+			StringBuilder builder = new(73);
+			int bytesread = file.Read(data);
+			if(bytesread == 0) {
+				return;
+			}
+			builder.Append($"{position + (i << 4):X8}");
+			for(int j = 0; j < bytesread; j++) {
+				builder.Append($" {data[j]:X2}");
+			}
+			builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
+			for(int j = 0; j < bytesread; j++) {
+				char c = (char)data[j];
+				if(char.IsControl(c)) {
+					builder.Append('.');
+				} else {
+					builder.Append((char)data[j]);
+				}
+			}
 			lock(ConsoleUse) {
 				Console.BackgroundColor = ConsoleColor.Black;
 				Console.ForegroundColor = ConsoleColor.White;
 				Console.SetCursorPosition(0, 2 + i);
-				int bytesread = file.Read(data);
-				if(bytesread == 0) {
-					return;
-				}
-				Console.Write($"{position + (i << 4):X8}");
-				for(int j = 0; j < bytesread; j++) {
-					Console.Write($" {data[j]:X2}");
-				}
-				Console.Write(new string(' ', (16 - bytesread) * 3));
-				Console.Write(' ');
-				for(int j = 0; j < bytesread; j++) {
-					char c = (char)data[j];
-					if(char.IsControl(c)) {
-						Console.Write('.');
-					} else {
-						Console.Write((char)data[j]);
-					}
-				}
+				Console.Write(builder);
 			}
 		}
 		static void ShowUpperBytes() {
@@ -100,32 +99,33 @@ namespace Hex4Terminal {
 				return;
 			}
 
+			int i = 0;
 			FileStream file = doc.Stream;
+			file.Position = position + (i << 4);
+			byte[] data = new byte[16];
+			StringBuilder builder = new(73);
+			int bytesread = file.Read(data);
+			if(bytesread == 0) {
+				return;
+			}
+			builder.Append($"{position + (i << 4):X8}");
+			for(int j = 0; j < bytesread; j++) {
+				builder.Append($" {data[j]:X2}");
+			}
+			builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
+			for(int j = 0; j < bytesread; j++) {
+				char c = (char)data[j];
+				if(char.IsControl(c)) {
+					builder.Append('.');
+				} else {
+					builder.Append((char)data[j]);
+				}
+			}
 			lock(ConsoleUse) {
-				file.Position = position;
 				Console.BackgroundColor = ConsoleColor.Black;
 				Console.ForegroundColor = ConsoleColor.White;
-				byte[] data = new byte[16];
-				int i = 0;
 				Console.SetCursorPosition(0, 2 + i);
-				int bytesread = file.Read(data);
-				if(bytesread == 0) {
-					return;
-				}
-				Console.Write($"{position + (i << 4):X8}");
-				for(int j = 0; j < bytesread; j++) {
-					Console.Write($" {data[j]:X2}");
-				}
-				Console.Write(new string(' ', (16 - bytesread) * 3));
-				Console.Write(' ');
-				for(int j = 0; j < bytesread; j++) {
-					char c = (char)data[j];
-					if(char.IsControl(c)) {
-						Console.Write('.');
-					} else {
-						Console.Write((char)data[j]);
-					}
-				}
+				Console.Write(builder);
 			}
 		}
 
@@ -135,17 +135,23 @@ namespace Hex4Terminal {
 			case ConsoleKey.Escape:
 				Program.Working = false;
 				break;
+			case ConsoleKey.PageUp:
+				PageUpScroll();
+				break;
+			case ConsoleKey.PageDown:
+				PageDownScroll();
+				break;
+			case ConsoleKey.End:
+				ScrollToEnd();
+				break;
+			case ConsoleKey.Home:
+				ScrollToStart();
+				break;
 			case ConsoleKey.UpArrow:
 				ScrollUp();
 				break;
 			case ConsoleKey.DownArrow:
 				ScrollDown();
-				break;
-			case ConsoleKey.Home:
-				ScrollToStart();
-				break;
-			case ConsoleKey.End:
-				ScrollToEnd();
 				break;
 			}
 		}
@@ -175,13 +181,35 @@ namespace Hex4Terminal {
 			}
 		}
 		static void ScrollToStart() {
-			BlankBytes();
-			position = 0;
-			ShowBytes();
+			if(position != 0) {
+				BlankBytes();
+				position = 0;
+				ShowBytes();
+			}
 		}
 		static void ScrollToEnd() {
+			if(position != (doc.Stream.Length & -16)) {
+				BlankBytes();
+				position = doc.Stream.Length & -16;
+				ShowBytes();
+			}
+		}
+		static void PageUpScroll() {
+			if(position - ((Console.WindowHeight - 4) << 4) < 0) {
+				ScrollToStart();
+				return;
+			}
 			BlankBytes();
-			position = doc.Stream.Length & -16;
+			position -= (Console.WindowHeight - 4) << 4;
+			ShowBytes();
+		}
+		static void PageDownScroll() {
+			if(position + ((Console.WindowHeight - 4) << 4) >= doc.Stream.Length) {
+				ScrollToEnd();
+				return;
+			}
+			BlankBytes();
+			position += (Console.WindowHeight - 4) << 4;
 			ShowBytes();
 		}
 
@@ -228,7 +256,8 @@ namespace Hex4Terminal {
 		}
 
 		public static void RedrawScreen() {
-
+			Console.Clear();
+			ShowBytes();
 		}
 	}
 }
