@@ -10,16 +10,20 @@ namespace Hex4Terminal {
 		public static object ConsoleUse = new();
 
 		static Document doc = null;
+		static List<UndoableChange> undobuffer = new(8);
 
 		public static void Initialize() {
+
 
 			InitInternal();
 		}
 
 		public static void Initialize(string filepath) {
 			doc = new Document(filepath);
-			InitInternal();
+			Console.SetCursorPosition(0, 1);
+			Console.WriteLine(Path.GetFileName(filepath));
 			ShowBytes();
+			InitInternal();
 		}
 
 		static void InitInternal() {
@@ -28,105 +32,50 @@ namespace Hex4Terminal {
 			Program.WindowSizeChanged += RedrawScreen;
 		}
 
-		static void ShowBytes() {
+		static readonly StringBuilder _builder = new(73);
+		static void ShowRowOfBytes(int offset) {
 			if(doc == null) {
 				return;
 			}
 
 			FileStream file = doc.Stream;
-			file.Position = position;
+			file.Position = position + (offset << 4);
 			byte[] data = new byte[16];
-			StringBuilder builder = new(73);
+			int bytesread = file.Read(data);
+			if(bytesread == 0) {
+				return;
+			}
+			_builder.Clear();
+			_builder.Append($"{position + (offset << 4):X8}");
+			for(int j = 0; j < bytesread; j++) {
+				_builder.Append($" {data[j]:X2}");
+			}
+			_builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
+			for(int j = 0; j < bytesread; j++) {
+				char c = (char)data[j];
+				if(char.IsControl(c)) {
+					_builder.Append('.');
+				} else {
+					_builder.Append((char)data[j]);
+				}
+			}
 			lock(ConsoleUse) {
 				Console.BackgroundColor = ConsoleColor.Black;
 				Console.ForegroundColor = ConsoleColor.White;
-				for(int i = 0; i < Console.WindowHeight - 3; i++) {
-					Console.SetCursorPosition(0, 2 + i);
-					int bytesread = file.Read(data);
-					if(bytesread == 0) {
-						break;
-					}
-					builder.Append($"{position + (i << 4):X8}");
-					for(int j = 0; j < bytesread; j++) {
-						builder.Append($" {data[j]:X2}");
-					}
-					builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
-					for(int j = 0; j < bytesread; j++) {
-						char c = (char)data[j];
-						builder.Append(char.IsControl(c) ? '.' : c);
-					}
-					Console.Write(builder);
-					builder.Clear();
-				}
+				Console.SetCursorPosition(0, 2 + offset);
+				Console.Write(_builder);
+			}
+		}
+		static void ShowBytes() {
+			for(int i = 0; i < Console.WindowHeight - 3; i++) {
+				ShowRowOfBytes(i);
 			}
 		}
 		static void ShowLowerBytes() {
-			if(doc == null) {
-				return;
-			}
-
-			int i = Console.WindowHeight - 4;
-			FileStream file = doc.Stream;
-			file.Position = position + (i << 4);
-			byte[] data = new byte[16];
-			StringBuilder builder = new(73);
-			int bytesread = file.Read(data);
-			if(bytesread == 0) {
-				return;
-			}
-			builder.Append($"{position + (i << 4):X8}");
-			for(int j = 0; j < bytesread; j++) {
-				builder.Append($" {data[j]:X2}");
-			}
-			builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
-			for(int j = 0; j < bytesread; j++) {
-				char c = (char)data[j];
-				if(char.IsControl(c)) {
-					builder.Append('.');
-				} else {
-					builder.Append((char)data[j]);
-				}
-			}
-			lock(ConsoleUse) {
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.SetCursorPosition(0, 2 + i);
-				Console.Write(builder);
-			}
+			ShowRowOfBytes(Console.WindowHeight - 4);
 		}
 		static void ShowUpperBytes() {
-			if(doc == null) {
-				return;
-			}
-
-			int i = 0;
-			FileStream file = doc.Stream;
-			file.Position = position + (i << 4);
-			byte[] data = new byte[16];
-			StringBuilder builder = new(73);
-			int bytesread = file.Read(data);
-			if(bytesread == 0) {
-				return;
-			}
-			builder.Append($"{position + (i << 4):X8}");
-			for(int j = 0; j < bytesread; j++) {
-				builder.Append($" {data[j]:X2}");
-			}
-			builder.Append(new string(' ', (16 - bytesread) * 3 + 1));
-			for(int j = 0; j < bytesread; j++) {
-				char c = (char)data[j];
-				if(char.IsControl(c)) {
-					builder.Append('.');
-				} else {
-					builder.Append((char)data[j]);
-				}
-			}
-			lock(ConsoleUse) {
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.SetCursorPosition(0, 2 + i);
-				Console.Write(builder);
-			}
+			ShowRowOfBytes(0);
 		}
 
 		static void ProcessInput(InputEventArgs e) {
@@ -165,8 +114,11 @@ namespace Hex4Terminal {
 					lock(ConsoleUse) {
 						Console.MoveBufferArea(0, 3, 73, Console.WindowHeight - 4, 0, 2);
 					}
+					ShowLowerBytes();
+				} else {
+					BlankBytes();
+					ShowBytes();
 				}
-				ShowLowerBytes();
 			}
 		}
 		static void ScrollUp() {
@@ -176,8 +128,11 @@ namespace Hex4Terminal {
 					lock(ConsoleUse) {
 						Console.MoveBufferArea(0, 2, 73, Console.WindowHeight - 4, 0, 3);
 					}
+					ShowUpperBytes();
+				} else {
+					BlankBytes();
+					ShowBytes();
 				}
-				ShowUpperBytes();
 			}
 		}
 		static void ScrollToStart() {

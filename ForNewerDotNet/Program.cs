@@ -22,62 +22,64 @@ namespace Hex4Terminal {
 				if(Console.BufferHeight < 50) {
 					Console.BufferHeight = 999;
 				}
-				OutHandle = GetStdHandle(-10);
+				InHandle = GetStdHandle(-10);
 			}
 
 			Console.BackgroundColor = ConsoleColor.Black;
 			Console.Clear();
 
-			if(args.Length > 0) {
-				UI.Initialize(args[0]);
-			} else {
-				UI.Initialize();
-			}
-
 			Thread clock = new(ClockLoop);
-			clock.Start();
+			try {
+				if(args.Length > 0) {
+					UI.Initialize(args[0]);
+				} else {
+					UI.Initialize();
+				}
+				clock.Priority = ThreadPriority.Lowest;
+				clock.Start();
 
-			while(MainLoop()) { }
+				while(MainLoop()) { }
+			} finally {
+				// Якщо щось станеться, все одно завершити програму коректно.
 
-			clock.Interrupt();
-			clock.Join();
+				clock.Priority = ThreadPriority.Highest;
+				clock.Interrupt();  
+				clock.Join();
 
-			Console.ResetColor();
-			Console.Clear();
-			Console.CursorVisible = true;
-			Console.TreatControlCAsInput = false;
+				Console.ResetColor();
+				Console.Clear();
+				Console.CursorVisible = true;
+				Console.TreatControlCAsInput = false;
+			}
 		}
 
 		static int wWidth;
 		static int wHeight;
 
-
 		// Дані та функції для застосування в Windows.
-		static IntPtr OutHandle;  // Вказівник на дескриптор stdin.
+		static IntPtr InHandle;  // Вказівник на дескриптор stdin.
 
 		// Отримати вказівник на дескриптор stdout/stdin/stderr.
 		[DllImport("KERNEL32.DLL")]
 		static extern IntPtr GetStdHandle(int nStdHandle);
-		// Чекати на зміну стану об'єкту впродовж певного часу.
+		// Чекати на зміну стану об'єкту.
 		[DllImport("KERNEL32.DLL")]
-		static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
-
+		static extern uint WaitForSingleObjectEx(
+			IntPtr hHandle, uint dwMilliseconds, bool bAlertable
+			);
 
 		static bool MainLoop() {
-			bool inwindows = OperatingSystem.IsWindows();
-
 			// Перевірити, якщо змінився розмір вікна.
 			if(Console.WindowWidth != wWidth || Console.WindowHeight != wHeight) {
-				lock(UI.ConsoleUse) {
-					wWidth = Console.WindowWidth;
-					wHeight = Console.WindowHeight;
-				}
-				WindowSizeChanged();
+				wWidth = Console.WindowWidth;
+				wHeight = Console.WindowHeight;
+				WindowSizeChanged();  // Виклик події.
 			}
 
 			// Перевірити наявність нового користувацького вводу.
-			if(inwindows) {
-				if(WaitForSingleObject(OutHandle, 8) == 0 && Console.KeyAvailable) {
+			if(OperatingSystem.IsWindows()) {
+				// У Windows чекати на повідомлення, що надходять до вікна консолі.
+				if(WaitForSingleObjectEx(InHandle, uint.MaxValue, true) == 0 && Console.KeyAvailable) {
 					KeyPress(new InputEventArgs(Console.ReadKey(true)));
 					ClearInputBuffer();
 				}
@@ -111,7 +113,7 @@ namespace Hex4Terminal {
 			// Викликати подію кожні півсекунди.
 			// У випадку будь-якого винятка припинити роботу.
 			try {
-				for(; ; ) {
+				do {
 					int ms = DateTime.Now.Millisecond;
 					if(ms < 500) {
 						Thread.Sleep(500 - ms);
@@ -119,7 +121,7 @@ namespace Hex4Terminal {
 						Thread.Sleep(1000 - ms);
 					}
 					ClockTick();
-				}
+				} while(Working);
 			} catch { }
 		}
 

@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hex4Terminal.UndoableChanges {
-	class RegionInserted: UndoableChange {
+namespace Hex4Terminal {
+	class RegionOverwritten: UndoableChange {
+		
 	}
 }

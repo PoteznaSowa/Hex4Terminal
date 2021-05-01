@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Hex4Terminal {
-	interface IDrawable {
-		public void Draw();
+	abstract class Region {
+		
 	}
 }
