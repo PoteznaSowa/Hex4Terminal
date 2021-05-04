@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 namespace Hex4Terminal {
 	abstract class Region {
 		public long Size {
+			// Розмір зміненої ділянки файлу.
 			get; protected set;
 		}
-		public int this[long position] {
-			get => ReadByte(position);
+		public long SizeDelta {
+			// На стільки змінюється розмір файлу після внесення зміни.
+			get; protected set;
 		}
-		protected abstract int ReadByte(long position);
+		public long Position {
+			// Де було змінено файл.
+			get; protected set;
+		}
 	}
 }

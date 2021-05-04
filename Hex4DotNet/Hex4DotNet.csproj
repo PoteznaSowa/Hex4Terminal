@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,30 +45,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditorLogic\ArbitraryData.cs" />
+    <Compile Include="EditorLogic\DataRegion.cs" />
     <Compile Include="EditorLogic\Document.cs" />
-    <Compile Include="EditorLogic\FileRef.cs" />
     <Compile Include="EditorLogic\Region.cs" />
     <Compile Include="UIObj\DoubledVBar.cs" />
     <Compile Include="UIObj\Frame.cs" />
+    <Compile Include="UIObj\GoToBox.cs" />
     <Compile Include="UIObj\IDrawable.cs" />
     <Compile Include="InputEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI.cs" />
-    <Compile Include="UndoableChanges\RegionDeleted.cs" />
-    <Compile Include="UndoableChanges\RegionInserted.cs" />
-    <Compile Include="UndoableChanges\RegionOverwritten.cs" />
-    <Compile Include="UndoableChanges\UndoableChange.cs" />
+    <Compile Include="EditorLogic\RegionDeleted.cs" />
+    <Compile Include="EditorLogic\RegionInserted.cs" />
+    <Compile Include="EditorLogic\RegionOverwritten.cs" />
+    <Compile Include="UIObj\OptionBox.cs" />
     <Compile Include="UIObj\VerticalBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TADA.WAV">
+    <None Include="ClassDiagram1.cd" />
+    <None Include="TADA.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Hex4Terminal {
-	class RegionOverwritten: UndoableChange {
-		
+	abstract class OptionBox {
+		public abstract void UserInput(ConsoleKeyInfo cki);
 	}
 }

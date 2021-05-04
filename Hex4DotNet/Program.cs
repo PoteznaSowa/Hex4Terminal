@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Hex4Terminal {
 	static class Program {
+		[STAThread]
 		static void Main(string[] args) {
 			Console.OutputEncoding = Encoding.UTF8;
 			Console.InputEncoding = Encoding.Unicode;
@@ -41,9 +42,11 @@ namespace Hex4Terminal {
 			} finally {
 				// Якщо щось станеться, все одно завершити програму коректно.
 
-				clock.Priority = ThreadPriority.Highest;
-				clock.Interrupt();  
-				clock.Join();
+				if(clock.IsAlive) {
+					clock.Priority = ThreadPriority.Highest;
+					clock.Interrupt();
+					clock.Join();
+				}
 
 				Console.ResetColor();
 				Console.Clear();
@@ -69,6 +72,7 @@ namespace Hex4Terminal {
 		static bool MainLoop() {
 			// Перевірити, якщо змінився розмір вікна.
 			if(Console.WindowWidth != wWidth || Console.WindowHeight != wHeight) {
+				Console.CursorVisible = false;
 				WindowSizeChanged();  // Виклик події.
 			}
 

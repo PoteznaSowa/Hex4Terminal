@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Hex4Terminal {
-	class RegionDeleted: UndoableChange {
-		public RegionDeleted(long size, long location) {
-			Location = location;
-			SizeDelta = -size;
+	abstract class DataRegion: Region {
+		protected byte[] data;
+
+		public byte this[int index] {
+			get => data[index];
 		}
 	}
 }

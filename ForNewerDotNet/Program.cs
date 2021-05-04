@@ -43,7 +43,7 @@ namespace Hex4Terminal {
 				// Якщо щось станеться, все одно завершити програму коректно.
 
 				clock.Priority = ThreadPriority.Highest;
-				clock.Interrupt();  
+				clock.Interrupt();
 				clock.Join();
 
 				Console.ResetColor();

@@ -10,7 +10,7 @@ namespace Hex4Terminal {
 		public static object ConsoleUse = new();
 
 		static Document doc = null;
-		static List<UndoableChange> undobuffer = new(8);
+		static readonly List<UndoableChange> undobuffer = new(8);
 
 		public static void Initialize() {
 

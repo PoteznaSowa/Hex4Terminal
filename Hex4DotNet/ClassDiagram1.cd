@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Hex4Terminal.DataRegion" Collapsed="true">
+    <Position X="3.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>EditorLogic\DataRegion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.Document">
+    <Position X="13" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABAAIgAAAAEhEACBAAAAAQhAAEIAAAAAAAAAQAACAA=</HashCode>
+      <FileName>EditorLogic\Document.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.Region" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAgAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>EditorLogic\Region.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.RegionDeleted" Collapsed="true">
+    <Position X="5.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EditorLogic\RegionDeleted.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.RegionInserted" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EditorLogic\RegionInserted.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.RegionOverwritten" Collapsed="true">
+    <Position X="5.5" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EditorLogic\RegionOverwritten.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.InputEventArgs">
+    <Position X="15.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>InputEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.Program">
+    <Position X="7.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="Hex4Terminal.Program.InputEventHandler">
+        <TypeIdentifier>
+          <NewMemberFileName>Program.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QAAQAgAQAAAACAAAAAAAgAQAAgAAAAyAAAAIBAAAAIA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.UI">
+    <Position X="10.25" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAA0AAACAQABAACoIAAAUgIlAAAQAACHAAAASIE=</HashCode>
+      <FileName>UI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.DoubledVBar" Collapsed="true">
+    <Position X="3.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UIObj\DoubledVBar.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Hex4Terminal.Frame" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAgAAAAAAAEAAAAAAAAAAIAIAAAAAYAA=</HashCode>
+      <FileName>UIObj\Frame.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Hex4Terminal.GoToBox">
+    <Position X="5.5" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAACAAAAAABAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>UIObj\GoToBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.OptionBox">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UIObj\OptionBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hex4Terminal.VerticalBar" Collapsed="true">
+    <Position X="3.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAgAAAAAAAAAAAAAAAAAAIAIAAAAAYAA=</HashCode>
+      <FileName>UIObj\VerticalBar.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Hex4Terminal.IDrawable" Collapsed="true">
+    <Position X="13.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UIObj\IDrawable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

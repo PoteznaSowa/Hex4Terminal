@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Hex4Terminal {
 	class RegionOverwritten: UndoableChange {
-		
+
 	}
 }
