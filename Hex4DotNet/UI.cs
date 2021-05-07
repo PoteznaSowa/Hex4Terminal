@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Diagnostics;
 using Microsoft.Win32;
 
 namespace Hex4Terminal {
@@ -12,8 +8,8 @@ namespace Hex4Terminal {
 		public static object ConsoleUse = new object();
 
 		static Document doc = null;
-		static OpenFileDialog oFileDialog = new OpenFileDialog();
-		static SaveFileDialog sFileDialog = new SaveFileDialog();
+		static readonly OpenFileDialog oFileDialog = new OpenFileDialog();
+		static readonly SaveFileDialog sFileDialog = new SaveFileDialog();
 
 		public static void Initialize() {
 			InitInternal();
@@ -24,7 +20,9 @@ namespace Hex4Terminal {
 			string folder = Path.GetDirectoryName(Path.GetFullPath(filepath));
 			oFileDialog.InitialDirectory = folder;
 			sFileDialog.InitialDirectory = folder;
+			sFileDialog.Filter = "Усі файли|*.*";
 			Console.SetCursorPosition(0, 1);
+			Console.ForegroundColor = ConsoleColor.DarkGray;
 			Console.WriteLine(Path.GetFileName(filepath));
 			ShowBytes();
 			HighlightCursor();
@@ -65,8 +63,10 @@ namespace Hex4Terminal {
 				}
 			}
 			lock(ConsoleUse) {
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.ForegroundColor = ConsoleColor.White;
+				//Console.BackgroundColor = ConsoleColor.Black;
+				//Console.ForegroundColor = ConsoleColor.White;
+				Console.BackgroundColor = ConsoleColor.White;
+				Console.ForegroundColor = ConsoleColor.Black;
 				Console.SetCursorPosition(0, 2 + offset);
 				Console.Write(_builder);
 			}
@@ -91,10 +91,32 @@ namespace Hex4Terminal {
 				optionBox = new GoToBox();
 				break;
 			case ConsoleKey.O:
-				if(oFileDialog.ShowDialog().Value) {
-					doc = new Document(oFileDialog.FileName);
+				for(; ; ) {
+					try {
+						OpenFile();
+						break;
+					} catch { }
+				}
+				break;
+			case ConsoleKey.S:
+				for(; ; ) {
+					try {
+						SaveFile();
+						break;
+					} catch { }
+				}
+				break;
+			case ConsoleKey.Y:
+				if(doc.UndoIndex < doc.UndoCount) {
+					position = doc.Redo();
 					BlankBytes();
-					position = 0;
+					ShowBytes();
+				}
+				break;
+			case ConsoleKey.Z:
+				if(doc.UndoIndex > 0) {
+					position = doc.Undo();
+					BlankBytes();
 					ShowBytes();
 				}
 				break;
@@ -161,7 +183,8 @@ namespace Hex4Terminal {
 			case ConsoleKey.D8:
 			case ConsoleKey.D9:
 				doc.OverwriteBytes(new byte[] {
-					(byte)((doc[position] << 4) + cki.Key - ConsoleKey.D0)
+					(byte)((doc[position] << 4) +
+					cki.Key - ConsoleKey.D0)
 					},
 					position);
 				ShowUpperBytes();
@@ -173,7 +196,8 @@ namespace Hex4Terminal {
 			case ConsoleKey.E:
 			case ConsoleKey.F:
 				doc.OverwriteBytes(new byte[] {
-					(byte)((doc[position] << 4) + cki.Key - ConsoleKey.A + 10)
+					(byte)((doc[position] << 4) +
+					cki.Key - ConsoleKey.A + 10)
 					},
 					position);
 				ShowUpperBytes();
@@ -189,7 +213,8 @@ namespace Hex4Terminal {
 			case ConsoleKey.NumPad8:
 			case ConsoleKey.NumPad9:
 				doc.OverwriteBytes(new byte[] {
-					(byte)((doc[position] << 4) + cki.Key - ConsoleKey.NumPad0)
+					(byte)((doc[position] << 4) +
+					cki.Key - ConsoleKey.NumPad0)
 					},
 					position);
 				ShowUpperBytes();
@@ -207,6 +232,19 @@ namespace Hex4Terminal {
 			BlankBytes();
 			ShowBytes();
 		}
+		public static void OpenFile() {
+			if(oFileDialog.ShowDialog().GetValueOrDefault(false)) {
+				doc = new Document(oFileDialog.FileName);
+				BlankBytes();
+				position = 0;
+				ShowBytes();
+			}
+		}
+		public static void SaveFile() {
+			if(sFileDialog.ShowDialog().GetValueOrDefault(false)) {
+				doc.Save(sFileDialog.FileName);
+			}
+		}
 
 		static long position = 0;
 		//static int selectionsize = 1;
@@ -217,8 +255,10 @@ namespace Hex4Terminal {
 			int data = doc[position];
 			lock(ConsoleUse) {
 				Console.SetCursorPosition(10 + offset * 3, 2);
-				Console.BackgroundColor = ConsoleColor.White;
-				Console.ForegroundColor = ConsoleColor.Black;
+				//Console.BackgroundColor = ConsoleColor.White;
+				//Console.ForegroundColor = ConsoleColor.Black;
+				Console.BackgroundColor = ConsoleColor.Black;
+				Console.ForegroundColor = ConsoleColor.White;
 				if(data == -1) {
 					Console.Write("  ");
 				} else {
@@ -231,8 +271,10 @@ namespace Hex4Terminal {
 			int data = doc[position];
 			lock(ConsoleUse) {
 				Console.SetCursorPosition(10 + offset * 3, 2);
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.ForegroundColor = ConsoleColor.White;
+				//Console.BackgroundColor = ConsoleColor.Black;
+				//Console.ForegroundColor = ConsoleColor.White;
+				Console.BackgroundColor = ConsoleColor.White;
+				Console.ForegroundColor = ConsoleColor.Black;
 				if(data == -1) {
 					Console.Write("  ");
 				} else {
@@ -266,7 +308,8 @@ namespace Hex4Terminal {
 			if(position + 16 < doc.Size) {
 				position += 16;
 				lock(ConsoleUse) {
-					Console.MoveBufferArea(0, 3, RowSize, Console.WindowHeight - 4, 0, 2);
+					Console.MoveBufferArea(
+						0, 3, RowSize, Console.WindowHeight - 4, 0, 2);
 				}
 				ShowLowerBytes();
 			}
@@ -275,7 +318,8 @@ namespace Hex4Terminal {
 			if(position > 15) {
 				position -= 16;
 				lock(ConsoleUse) {
-					Console.MoveBufferArea(0, 2, RowSize, Console.WindowHeight - 4, 0, 3);
+					Console.MoveBufferArea(
+						0, 2, RowSize, Console.WindowHeight - 4, 0, 3);
 				}
 				ShowUpperBytes();
 			}

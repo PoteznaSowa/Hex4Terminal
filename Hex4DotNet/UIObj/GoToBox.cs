@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Hex4Terminal {
 	class GoToBox: OptionBox {
@@ -25,7 +21,8 @@ namespace Hex4Terminal {
 			case ConsoleKey.D7:
 			case ConsoleKey.D8:
 			case ConsoleKey.D9:
-				num = ((num << 4) & 0xF_FFFF_FFFF) + (cki.Key - ConsoleKey.D0);
+				num = ((num << 4) & 0xF_FFFF_FFFF)
+					+ (cki.Key - ConsoleKey.D0);
 				UpdateDisplay();
 				break;
 			case ConsoleKey.A:
@@ -34,7 +31,8 @@ namespace Hex4Terminal {
 			case ConsoleKey.D:
 			case ConsoleKey.E:
 			case ConsoleKey.F:
-				num = ((num << 4) & 0xF_FFFF_FFFF) + (cki.Key - ConsoleKey.A + 10);
+				num = ((num << 4) & 0xF_FFFF_FFFF)
+					+ (cki.Key - ConsoleKey.A + 10);
 				UpdateDisplay();
 				break;
 			case ConsoleKey.NumPad0:
@@ -47,7 +45,8 @@ namespace Hex4Terminal {
 			case ConsoleKey.NumPad7:
 			case ConsoleKey.NumPad8:
 			case ConsoleKey.NumPad9:
-				num = ((num << 4) & 0xF_FFFF_FFFF) + (cki.Key - ConsoleKey.NumPad0);
+				num = ((num << 4) & 0xF_FFFF_FFFF)
+					+ (cki.Key - ConsoleKey.NumPad0);
 				UpdateDisplay();
 				break;
 			}
@@ -71,7 +70,7 @@ namespace Hex4Terminal {
 				Console.SetCursorPosition(UI.RowSize, 3);
 				Console.Write("                       ");
 				Console.SetCursorPosition(UI.RowSize, 4);
-				Console.Write("         ");
+				Console.Write("          ");
 			}
 		}
 

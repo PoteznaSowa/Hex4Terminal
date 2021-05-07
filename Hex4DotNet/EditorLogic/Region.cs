@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Hex4Terminal {
+﻿namespace Hex4Terminal {
 	abstract class Region {
 		public long Size {
 			// Розмір зміненої ділянки файлу.

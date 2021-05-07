@@ -25,7 +25,8 @@ namespace Hex4Terminal {
 			}
 			InHandle = GetStdHandle(-10);
 
-			Console.BackgroundColor = ConsoleColor.Black;
+			//Console.BackgroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.White;
 			Console.Clear();
 
 			Thread clock = new Thread(ClockLoop);
@@ -77,7 +78,8 @@ namespace Hex4Terminal {
 			}
 
 			// Перевірити наявність нового користувацького вводу.
-			if(WaitForSingleObjectEx(InHandle, uint.MaxValue, true) == 0 && Console.KeyAvailable) {
+			if(WaitForSingleObjectEx(InHandle, uint.MaxValue, true) == 0 &&
+				Console.KeyAvailable) {
 				KeyPress(new InputEventArgs(Console.ReadKey(true)));
 				ClearInputBuffer();
 			}

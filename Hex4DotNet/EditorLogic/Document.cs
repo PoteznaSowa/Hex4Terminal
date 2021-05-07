@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -46,11 +43,11 @@ namespace Hex4Terminal {
 			}
 		}
 
-		public int this[long position] => ReadFromUndo(position, undobuffer.Count - 1);
+		public int this[long position] => ReadFromUndo(position, UndoIndex);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		int ReadFromUndo(long position, int index) {
-			if(index == -1) {
+			if(index == 0) {
 				if(Stream != null) {
 					Stream.Seek(position, SeekOrigin.Begin);
 					return Stream.ReadByte();
@@ -60,15 +57,16 @@ namespace Hex4Terminal {
 				}
 			}
 
+			index--;
 			Region r = undobuffer[index];
 			if(position < r.Position) {
-				return ReadFromUndo(position, index - 1);
+				return ReadFromUndo(position, index);
 			} else if(r is RegionDeleted) {
-				return ReadFromUndo(position + r.Size, index - 1);
+				return ReadFromUndo(position + r.Size, index);
 			} else if(r is DataRegion dr) {
 				return position < r.Position + r.Size ?
 					dr[(int)(position - r.Position)] :
-					ReadFromUndo(position - r.SizeDelta, index - 1);
+					ReadFromUndo(position - r.SizeDelta, index);
 			} else {
 				//throw new Exception("Зіпсований undo-буфер.");
 				return -1;
@@ -104,9 +102,10 @@ namespace Hex4Terminal {
 		public void OverwriteBytes(byte[] data, long position) {
 			Modified = true;
 			ClearUndoneChanges();
+			DeleteDuplicateUndo(data.Length, position, typeof(RegionOverwritten));
 			if(position + data.Length > Size) {
-				// Якщо перезаписувані дані виходять за межі файлу, розділити їх на
-				// "голову" та "хвіст" та обробити їх окремо.
+				// Якщо перезаписувані дані виходять за межі файлу,
+				// розділити їх на "голову" та "хвіст" та обробити їх окремо.
 				byte[] head = new byte[Size - position];
 				Array.Copy(data, head, head.Length);
 				OverwriteBytes(head, position);
@@ -118,10 +117,19 @@ namespace Hex4Terminal {
 			}
 			UndoIndex++;
 		}
+		void DeleteDuplicateUndo(long size, long position, Type type) {
+			if(UndoCount > 0) {
+				Region r = undobuffer[undobuffer.Count - 1];
+				if(r.GetType() == type && r.Position == position && r.Size == size) {
+					undobuffer.RemoveAt(undobuffer.Count - 1);
+					UndoIndex--;
+				}
+			}
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		void ClearUndoneChanges() {
-			if(UndoCount < undobuffer.Count) {
+			if(UndoIndex < undobuffer.Count) {
 				undobuffer.RemoveRange(UndoIndex, undobuffer.Count - UndoIndex);
 			}
 		}
