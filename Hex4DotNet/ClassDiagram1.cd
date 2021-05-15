@@ -10,7 +10,7 @@
   <Class Name="Hex4Terminal.Document">
     <Position X="13" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AABAAIgAAAAEhEACBAAAAAQhAAEIAAAAAAAAAQAACAA=</HashCode>
+      <HashCode>AAAAAIgAAAAEhEACDBAAAAQhAgEIAAAAAAAAAQAACAA=</HashCode>
       <FileName>EditorLogic\Document.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -69,7 +69,7 @@
   <Class Name="Hex4Terminal.UI">
     <Position X="10.25" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>IAAAAAA0AAACAQABAACoIAAAUgIlAAAQAACHAAAASIE=</HashCode>
+      <HashCode>IAAAABA0AAACAQABAACoIAAAUwIlAEAQBQCGAAAASIE=</HashCode>
       <FileName>UI.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -112,7 +112,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Interface Name="Hex4Terminal.IDrawable" Collapsed="true">
-    <Position X="13.25" Y="5.75" Width="1.5" />
+    <Position X="13.25" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>UIObj\IDrawable.cs</FileName>

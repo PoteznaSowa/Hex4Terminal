@@ -12,6 +12,11 @@ namespace Hex4Terminal {
 		static readonly SaveFileDialog sFileDialog = new SaveFileDialog();
 
 		public static void Initialize() {
+			OpenFile();
+			if(doc == null) {
+				Program.Working = false;
+				return;
+			}
 			InitInternal();
 		}
 
@@ -22,14 +27,14 @@ namespace Hex4Terminal {
 			sFileDialog.InitialDirectory = folder;
 			sFileDialog.Filter = "Усі файли|*.*";
 			Console.SetCursorPosition(0, 1);
-			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine(Path.GetFileName(filepath));
 			ShowBytes();
-			HighlightCursor();
 			InitInternal();
 		}
 
 		static void InitInternal() {
+			HighlightCursor();
 			Program.KeyPress += ProcessInput;
 			Program.ClockTick += UpdateClock;
 			Program.WindowSizeChanged += RedrawScreen;
@@ -63,10 +68,10 @@ namespace Hex4Terminal {
 				}
 			}
 			lock(ConsoleUse) {
-				//Console.BackgroundColor = ConsoleColor.Black;
-				//Console.ForegroundColor = ConsoleColor.White;
-				Console.BackgroundColor = ConsoleColor.White;
-				Console.ForegroundColor = ConsoleColor.Black;
+				Console.BackgroundColor = ConsoleColor.Black;
+				Console.ForegroundColor = ConsoleColor.White;
+				//Console.BackgroundColor = ConsoleColor.White;
+				//Console.ForegroundColor = ConsoleColor.Black;
 				Console.SetCursorPosition(0, 2 + offset);
 				Console.Write(_builder);
 			}
@@ -238,6 +243,9 @@ namespace Hex4Terminal {
 				BlankBytes();
 				position = 0;
 				ShowBytes();
+				Console.SetCursorPosition(0, 1);
+				Console.ForegroundColor = ConsoleColor.White;
+				Console.WriteLine(Path.GetFileName(oFileDialog.FileName));
 			}
 		}
 		public static void SaveFile() {
@@ -255,10 +263,10 @@ namespace Hex4Terminal {
 			int data = doc[position];
 			lock(ConsoleUse) {
 				Console.SetCursorPosition(10 + offset * 3, 2);
-				//Console.BackgroundColor = ConsoleColor.White;
-				//Console.ForegroundColor = ConsoleColor.Black;
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.ForegroundColor = ConsoleColor.White;
+				Console.BackgroundColor = ConsoleColor.White;
+				Console.ForegroundColor = ConsoleColor.Black;
+				//Console.BackgroundColor = ConsoleColor.Black;
+				//Console.ForegroundColor = ConsoleColor.White;
 				if(data == -1) {
 					Console.Write("  ");
 				} else {
@@ -271,10 +279,10 @@ namespace Hex4Terminal {
 			int data = doc[position];
 			lock(ConsoleUse) {
 				Console.SetCursorPosition(10 + offset * 3, 2);
-				//Console.BackgroundColor = ConsoleColor.Black;
-				//Console.ForegroundColor = ConsoleColor.White;
-				Console.BackgroundColor = ConsoleColor.White;
-				Console.ForegroundColor = ConsoleColor.Black;
+				Console.BackgroundColor = ConsoleColor.Black;
+				Console.ForegroundColor = ConsoleColor.White;
+				//Console.BackgroundColor = ConsoleColor.White;
+				//Console.ForegroundColor = ConsoleColor.Black;
 				if(data == -1) {
 					Console.Write("  ");
 				} else {

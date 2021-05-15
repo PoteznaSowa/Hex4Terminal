@@ -25,8 +25,8 @@ namespace Hex4Terminal {
 			}
 			InHandle = GetStdHandle(-10);
 
-			//Console.BackgroundColor = ConsoleColor.Black;
-			Console.BackgroundColor = ConsoleColor.White;
+			Console.BackgroundColor = ConsoleColor.Black;
+			//Console.BackgroundColor = ConsoleColor.White;
 			Console.Clear();
 
 			Thread clock = new Thread(ClockLoop);
@@ -77,9 +77,13 @@ namespace Hex4Terminal {
 				WindowSizeChanged();  // Виклик події.
 			}
 
+			// Виконувати функцію очікування не більше 1 хвилини,
+			// інакше CLR може викинути виняток, подумавши, що стався deadlock.
+			const uint timeout = 60 * 1000;  // 60 * 1000 мс = 1 хвилина.
+
 			// Перевірити наявність нового користувацького вводу.
-			if(WaitForSingleObjectEx(InHandle, uint.MaxValue, true) == 0 &&
-				Console.KeyAvailable) {
+			if(WaitForSingleObjectEx(InHandle, timeout, true) == 0
+				&& Console.KeyAvailable) {
 				KeyPress(new InputEventArgs(Console.ReadKey(true)));
 				ClearInputBuffer();
 			}
@@ -92,6 +96,7 @@ namespace Hex4Terminal {
 				Console.ReadKey(true);
 			}
 		}
+
 		static void ClockLoop() {
 			// Викликати подію кожні півсекунди.
 			// У випадку будь-якого винятка припинити роботу.
