@@ -130,8 +130,6 @@ namespace Hex4Terminal {
 
 		static void ProcessInput(InputEventArgs e) {
 			if(optionBox != null) {
-				// Якщо наявне вікно опцій, перенаправити
-				// туди ввід з клавіатури.
 				optionBox.UserInput(e.Key);
 				goto InputDone;
 			}
