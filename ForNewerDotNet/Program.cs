@@ -40,7 +40,6 @@ namespace Hex4Terminal {
 
 				while(MainLoop()) { }
 			} finally {
-				// Якщо щось станеться, все одно завершити програму коректно.
 
 				clock.Priority = ThreadPriority.Highest;
 				clock.Interrupt();
@@ -56,29 +55,24 @@ namespace Hex4Terminal {
 		static int wWidth;
 		static int wHeight;
 
-		// Дані та функції для застосування в Windows.
-		static IntPtr InHandle;  // Вказівник на дескриптор stdin.
+		static IntPtr InHandle;
 
-		// Отримати вказівник на дескриптор stdout/stdin/stderr.
 		[DllImport("KERNEL32.DLL")]
 		static extern IntPtr GetStdHandle(int nStdHandle);
-		// Чекати на зміну стану об'єкту.
+
 		[DllImport("KERNEL32.DLL")]
 		static extern uint WaitForSingleObjectEx(
 			IntPtr hHandle, uint dwMilliseconds, bool bAlertable
 			);
 
 		static bool MainLoop() {
-			// Перевірити, якщо змінився розмір вікна.
 			if(Console.WindowWidth != wWidth || Console.WindowHeight != wHeight) {
 				wWidth = Console.WindowWidth;
 				wHeight = Console.WindowHeight;
-				WindowSizeChanged();  // Виклик події.
+				WindowSizeChanged();
 			}
 
-			// Перевірити наявність нового користувацького вводу.
 			if(OperatingSystem.IsWindows()) {
-				// У Windows чекати на повідомлення, що надходять до вікна консолі.
 				if(WaitForSingleObjectEx(InHandle, uint.MaxValue, true) == 0 && Console.KeyAvailable) {
 					KeyPress(new InputEventArgs(Console.ReadKey(true)));
 					ClearInputBuffer();
@@ -110,8 +104,6 @@ namespace Hex4Terminal {
 		}
 		*/
 		static void ClockLoop() {
-			// Викликати подію кожні півсекунди.
-			// У випадку будь-якого винятка припинити роботу.
 			try {
 				do {
 					int ms = DateTime.Now.Millisecond;
