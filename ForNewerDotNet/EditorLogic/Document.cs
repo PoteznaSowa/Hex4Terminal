@@ -11,11 +11,9 @@ namespace Hex4Terminal {
 		}
 
 		public Document() {
-			// Створити новий файл.
 			Stream = null;
 		}
 		public Document(string path) {
-			// Відкрити файл на комп'ютері.
 			Stream = File.OpenRead(path);
 		}
 
