@@ -14,7 +14,6 @@ namespace Hex4Terminal {
 			Console.CursorVisible = false;
 			Console.TreatControlCAsInput = true;
 
-			// Задати розмір екрану з шириною 120 символів.
 			Console.WindowWidth = 120;
 			Console.BufferWidth = 120;
 			Console.WindowHeight = 30;
@@ -41,7 +40,6 @@ namespace Hex4Terminal {
 
 				while(MainLoop()) { }
 			} finally {
-				// Якщо щось станеться, все одно завершити програму коректно.
 
 				if(clock.IsAlive) {
 					clock.Priority = ThreadPriority.Highest;
@@ -59,31 +57,28 @@ namespace Hex4Terminal {
 		static int wWidth;
 		static int wHeight;
 
-		static IntPtr InHandle = GetStdHandle(-10);  // Вказівник на дескриптор stdin.
+		static IntPtr InHandle = GetStdHandle(-10);
 
-		// Отримати вказівник на дескриптор stdout/stdin/stderr.
 		[DllImport("KERNEL32.DLL")]
 		static extern IntPtr GetStdHandle(int nStdHandle);
-		// Чекати на зміну стану об'єкту.
+
 		[DllImport("KERNEL32.DLL")]
 		static extern uint WaitForSingleObjectEx(
 			IntPtr hHandle, uint dwMilliseconds, bool bAlertable
 			);
 
 		static bool MainLoop() {
-			// Перевірити, якщо змінився розмір вікна.
 			if(Console.WindowWidth != wWidth || Console.WindowHeight != wHeight) {
 				Console.CursorVisible = false;
-				WindowSizeChanged();  // Виклик події.
+				WindowSizeChanged();
 			}
 
-			// Виконувати функцію очікування не більше 1 хвилини,
-			// інакше CLR може викинути виняток, подумавши, що стався deadlock.
-			const uint timeout = 60 * 1000;  // 60 * 1000 мс = 1 хвилина.
+			const uint timeout = 60 * 1000;
 
 			// Перевірити наявність нового користувацького вводу.
 			if(WaitForSingleObjectEx(InHandle, timeout, true) == 0
-				&& Console.KeyAvailable) {
+				&& Console.KeyAvailable)
+			{
 				KeyPress(new InputEventArgs(Console.ReadKey(true)));
 				ClearInputBuffer();
 			}
@@ -98,8 +93,6 @@ namespace Hex4Terminal {
 		}
 
 		static void ClockLoop() {
-			// Викликати подію кожні півсекунди.
-			// У випадку будь-якого винятка припинити роботу.
 			try {
 				do {
 					int ms = DateTime.Now.Millisecond;
