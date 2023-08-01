@@ -18,8 +18,6 @@ namespace Hex4Terminal {
 
 		readonly List<Region> undobuffer = new List<Region>(8);
 		public int UndoIndex {
-			// Якщо це значення дорівнює 0, це означає,
-			// що файл ще не змінювався з моменту відкриття.
 			get; private set;
 		}
 		public int UndoCount {
@@ -27,12 +25,10 @@ namespace Hex4Terminal {
 		}
 
 		public Document() {
-			// Створити новий файл.
 			Stream = null;
 			Name = "untitled";
 		}
 		public Document(string path) {
-			// Відкрити файл на комп'ютері.
 			Stream = File.OpenRead(path);
 			Size = Stream.Length;
 			Name = Path.GetFileName(Stream.Name);
@@ -52,7 +48,6 @@ namespace Hex4Terminal {
 					Stream.Seek(position, SeekOrigin.Begin);
 					return Stream.ReadByte();
 				} else {
-					// Нема відкритого файлу — порожнеча.
 					return -1;
 				}
 			}
@@ -104,8 +99,6 @@ namespace Hex4Terminal {
 			ClearUndoneChanges();
 			DeleteDuplicateUndo(data.Length, position, typeof(RegionOverwritten));
 			if(position + data.Length > Size) {
-				// Якщо перезаписувані дані виходять за межі файлу,
-				// розділити їх на "голову" та "хвіст" та обробити їх окремо.
 				byte[] head = new byte[Size - position];
 				Array.Copy(data, head, head.Length);
 				OverwriteBytes(head, position);
@@ -134,7 +127,6 @@ namespace Hex4Terminal {
 			}
 		}
 
-		// Скасувати останню зміну та повернути позицію, де вона була.
 		public long Undo() {
 			Modified = true;
 			return UndoIndex > 0
@@ -142,7 +134,6 @@ namespace Hex4Terminal {
 				: throw new InvalidOperationException("Нема чого скасовувати!");
 		}
 
-		// Повернути скасовану зміну.
 		public long Redo() {
 			if(UndoIndex < undobuffer.Count) {
 				Modified = true;
